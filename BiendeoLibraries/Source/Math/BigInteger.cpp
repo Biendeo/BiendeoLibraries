@@ -1,5 +1,7 @@
 #include "BigInteger.h"
 
+#include <string>
+
 namespace Biendeo {
 	BigInteger::BigInteger() : BigInteger(0) {
 	}
@@ -40,6 +42,8 @@ namespace Biendeo {
 					b2.bits.at(i) ? ++value : value;
 				}
 				carry ? ++value : value;
+				
+				carry = false;
 
 				if (value >= 2) {
 					value -= 2;
@@ -58,19 +62,77 @@ namespace Biendeo {
 	}
 
 	BigInteger BigInteger::Subtract(const BigInteger& b1, const BigInteger& b2) {
-		return BigInteger();
+		if (b1.sign == Sign::Negative && b2.sign == Sign::Positive) {
+			return FlipSign(Add(b2, FlipSign(b1)));
+		} else if (b1.sign == Sign::Positive && b2.sign == Sign::Negative) {
+			return Add(b1, FlipSign(b2));
+		} else if (b1.sign == Sign::Negative && b2.sign == Sign::Negative) {
+			return FlipSign(Subtract(FlipSign(b1), FlipSign(b2)));
+		} else {
+			if (Less(b1, b2)) {
+				return FlipSign(Subtract(b2, b1));
+			}
+
+			// 11100 - 1010 = 10100
+
+			BigInteger r = b1;
+
+			bool carry = false;
+			for (int i = 0; i < b1.bits.size(); ++i) {
+				int value = 0;
+				b1.bits.at(i) ? ++value : value;
+
+				if (i < b2.bits.size()) {
+					b2.bits.at(i) ? --value : value;
+				}
+
+				carry ? --value : value;
+
+				carry = false;
+
+				if (value < 0) {
+					value += 2;
+					carry = true;
+				}
+
+				value == 1 ? r.bits.at(i) = true : r.bits.at(i) = false;
+			}
+
+			while (!r.bits.back() && r.bits.size() > 1) {
+				r.bits.pop_back();
+			}
+
+			return r;
+		}
 	}
 
 	BigInteger BigInteger::Multiply(const BigInteger& b1, const BigInteger& b2) {
-		return BigInteger();
+		BigInteger r = BigInteger(0);
+		BigInteger m = BigInteger(b2);
+		while (m > 0) {
+			r += b1;
+			--m;
+		}
+		return r;
 	}
 
 	BigInteger BigInteger::Divide(const BigInteger& b1, const BigInteger& b2) {
-		return BigInteger();
+		BigInteger r = BigInteger(0);
+		BigInteger x = b1;
+		while (x >= b2) {
+			x -= b2;
+			++r;
+		}
+
+		return r;
 	}
 
 	BigInteger BigInteger::Modulus(const BigInteger& b1, const BigInteger& b2) {
-		return BigInteger();
+		BigInteger r = b1;
+		while (r >= b2) {
+			r -= b2;
+		}
+		return r;
 	}
 
 	bool BigInteger::Greater(const BigInteger& b1, const BigInteger& b2) {
@@ -152,9 +214,28 @@ namespace Biendeo {
 
 	std::string BigInteger::ToString(const BigInteger& b1) {
 		std::string s;
-		for (bool b : b1.bits) {
-			b ? s = "1" + s : s = "0" + s;
+		BigInteger r = b1;
+
+		if (r == BigInteger(0)) {
+			return "0";
 		}
+
+		while (r > BigInteger(0)) {
+			BigInteger m = r % BigInteger(10);
+			int value = 0;
+			int exponent = 1;
+			for (bool b : m.bits) {
+				value += exponent * (b ? 1 : 0);
+				exponent *= 2;
+			}
+			s = std::to_string(value) + s;
+			r /= BigInteger(10);
+		}
+
+		if (r.sign == Sign::Negative) {
+			s = "-" + s;
+		}
+
 		return s;
 	}
 
@@ -182,23 +263,23 @@ namespace Biendeo {
 		return BigInteger::FlipSign(b);
 	}
 
-	BigInteger& BigInteger::operator+=(BigInteger& b2) {
+	BigInteger& BigInteger::operator+=(const BigInteger& b2) {
 		return (*this) = (*this) + b2;
 	}
 
-	BigInteger& BigInteger::operator-=(BigInteger& b2) {
+	BigInteger& BigInteger::operator-=(const BigInteger& b2) {
 		return (*this) = (*this) - b2;
 	}
 
-	BigInteger& BigInteger::operator*=(BigInteger& b2) {
+	BigInteger& BigInteger::operator*=(const BigInteger& b2) {
 		return (*this) = (*this) * b2;
 	}
 
-	BigInteger& BigInteger::operator/=(BigInteger& b2) {
+	BigInteger& BigInteger::operator/=(const BigInteger& b2) {
 		return (*this) = (*this) / b2;
 	}
 
-	BigInteger& BigInteger::operator%=(BigInteger& b2) {
+	BigInteger& BigInteger::operator%=(const BigInteger& b2) {
 		return (*this) = (*this) % b2;
 	}
 

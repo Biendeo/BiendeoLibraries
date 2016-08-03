@@ -17,11 +17,11 @@ namespace Biendeo {
 		friend BigInteger operator%(const BigInteger& b1, const BigInteger& b2);
 		friend BigInteger operator-(const BigInteger& b);
 
-		BigInteger& operator+=(BigInteger& b2);
-		BigInteger& operator-=(BigInteger& b2);
-		BigInteger& operator*=(BigInteger& b2);
-		BigInteger& operator/=(BigInteger& b2);
-		BigInteger& operator%=(BigInteger& b2);
+		BigInteger& operator+=(const BigInteger& b2);
+		BigInteger& operator-=(const BigInteger& b2);
+		BigInteger& operator*=(const BigInteger& b2);
+		BigInteger& operator/=(const BigInteger& b2);
+		BigInteger& operator%=(const BigInteger& b2);
 
 		BigInteger& operator++();
 		BigInteger& operator--();
