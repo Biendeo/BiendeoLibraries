@@ -20,9 +20,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Math\Matrix.h" />
+    <ClInclude Include="Source\Time\Instant.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Math\Matrix.cpp" />
+    <ClCompile Include="Source\Time\Instant.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{C32DA6B9-E28E-4513-BC05-E079E800ECC5}</ProjectGuid>
