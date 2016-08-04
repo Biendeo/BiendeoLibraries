@@ -73,8 +73,6 @@ namespace Biendeo {
 				return FlipSign(Subtract(b2, b1));
 			}
 
-			// 11100 - 1010 = 10100
-
 			BigInteger r = b1;
 
 			bool carry = false;
@@ -108,7 +106,7 @@ namespace Biendeo {
 
 	BigInteger BigInteger::Multiply(const BigInteger& b1, const BigInteger& b2) {
 		BigInteger r = BigInteger(0);
-		BigInteger m = BigInteger(b2);
+		BigInteger m = b2;
 		while (m > 0) {
 			r += b1;
 			--m;
