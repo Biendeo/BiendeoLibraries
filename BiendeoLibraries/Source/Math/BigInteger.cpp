@@ -131,17 +131,12 @@ namespace Biendeo {
 		BigInteger r = 0;
 		BigInteger s = b1;
 
-		while (s > b2) {
+		while (s >= b2) {
 			BigInteger x = b2;
-			int i = 0;
+			BigInteger y = 1;
 			while (x * 2 <= s) {
 				x.bits.insert(x.bits.begin(), false);
-				++i;
-			}
-
-			BigInteger y = 1;
-			for (int j = 0; j < i; ++j) {
-				y *= 2;
+				y.bits.insert(y.bits.begin(), false);
 			}
 
 			r += y;
