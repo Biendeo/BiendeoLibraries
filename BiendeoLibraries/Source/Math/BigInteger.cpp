@@ -105,7 +105,7 @@ namespace Biendeo {
 	}
 
 	BigInteger BigInteger::Multiply(const BigInteger& b1, const BigInteger& b2) {
-		std::vector<BigInteger> longResults;
+		BigInteger r = 0;
 
 		for (int i = 0; i < b2.bits.size(); ++i) {
 			if (b2.bits.at(i)) {
@@ -116,13 +116,8 @@ namespace Biendeo {
 				for (int j = 0; j < i; ++j) {
 					x.bits.insert(x.bits.begin(), false);
 				}
-				longResults.push_back(x);
+				r += x;
 			}
-		}
-
-		BigInteger r = 0;
-		for (BigInteger& x : longResults) {
-			r += x;
 		}
 
 		if (b1.sign != b2.sign) {
@@ -134,10 +129,23 @@ namespace Biendeo {
 
 	BigInteger BigInteger::Divide(const BigInteger& b1, const BigInteger& b2) {
 		BigInteger r = 0;
-		BigInteger x = b1;
-		while (x >= b2) {
-			x -= b2;
-			++r;
+		BigInteger s = b1;
+
+		while (s > b2) {
+			BigInteger x = b2;
+			int i = 0;
+			while (x * 2 <= s) {
+				x.bits.insert(x.bits.begin(), false);
+				++i;
+			}
+
+			BigInteger y = 1;
+			for (int j = 0; j < i; ++j) {
+				y *= 2;
+			}
+
+			r += y;
+			s -= x;
 		}
 
 		return r;

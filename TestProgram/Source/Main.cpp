@@ -6,15 +6,13 @@
 int main(int argc, char* argv[]) {
 	using namespace Biendeo;
 
-	BigInteger a(1231241);
+	BigInteger a(9876);
 
-	BigInteger b(-98712512);
+	BigInteger b(1234);
 
 	BigInteger c = a * b;
 
 	std::cout << a.ToString() + " * " + b.ToString() + " = " + c.ToString() + "\n";
-
-	std::cout << sizeof(b);
 
 	return 0;
 }
