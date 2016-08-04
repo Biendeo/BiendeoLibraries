@@ -105,17 +105,35 @@ namespace Biendeo {
 	}
 
 	BigInteger BigInteger::Multiply(const BigInteger& b1, const BigInteger& b2) {
-		BigInteger r = BigInteger(0);
-		BigInteger m = b2;
-		while (m > 0) {
-			r += b1;
-			--m;
+		std::vector<BigInteger> longResults;
+
+		for (int i = 0; i < b2.bits.size(); ++i) {
+			if (b2.bits.at(i)) {
+				BigInteger x = b1;
+				if (x.sign == Sign::Negative) {
+					x = FlipSign(x);
+				}
+				for (int j = 0; j < i; ++j) {
+					x.bits.insert(x.bits.begin(), false);
+				}
+				longResults.push_back(x);
+			}
 		}
+
+		BigInteger r = 0;
+		for (BigInteger& x : longResults) {
+			r += x;
+		}
+
+		if (b1.sign != b2.sign) {
+			r.sign = Sign::Negative;
+		}
+
 		return r;
 	}
 
 	BigInteger BigInteger::Divide(const BigInteger& b1, const BigInteger& b2) {
-		BigInteger r = BigInteger(0);
+		BigInteger r = 0;
 		BigInteger x = b1;
 		while (x >= b2) {
 			x -= b2;
@@ -126,11 +144,7 @@ namespace Biendeo {
 	}
 
 	BigInteger BigInteger::Modulus(const BigInteger& b1, const BigInteger& b2) {
-		BigInteger r = b1;
-		while (r >= b2) {
-			r -= b2;
-		}
-		return r;
+		return b1 - b2 * (b1 / b2);
 	}
 
 	bool BigInteger::Greater(const BigInteger& b1, const BigInteger& b2) {
@@ -180,7 +194,7 @@ namespace Biendeo {
 	}
 
 	bool BigInteger::Equals(const BigInteger& b1, const BigInteger& b2) {
-		if (b1.sign == b2.sign && b1.bits.size() != b2.bits.size()) {
+		if (b1.sign != b2.sign || b1.bits.size() != b2.bits.size()) {
 			return false;
 		} else {
 			for (int i = 0; i < b1.bits.size(); ++i) {
@@ -193,7 +207,7 @@ namespace Biendeo {
 	}
 
 	BigInteger BigInteger::FlipSign(const BigInteger& b) {
-		if (Equals(b, BigInteger(0))) {
+		if (Equals(b, 0)) {
 			return b;
 		} else {
 			BigInteger r = b;
@@ -214,12 +228,16 @@ namespace Biendeo {
 		std::string s;
 		BigInteger r = b1;
 
-		if (r == BigInteger(0)) {
+		bool negative = r.sign == Sign::Negative;
+
+		r.sign = Sign::Positive;
+
+		if (r == 0) {
 			return "0";
 		}
 
-		while (r > BigInteger(0)) {
-			BigInteger m = r % BigInteger(10);
+		while (r > 0) {
+			BigInteger m = r % 10;
 			int value = 0;
 			int exponent = 1;
 			for (bool b : m.bits) {
@@ -227,10 +245,10 @@ namespace Biendeo {
 				exponent *= 2;
 			}
 			s = std::to_string(value) + s;
-			r /= BigInteger(10);
+			r /= 10;
 		}
 
-		if (r.sign == Sign::Negative) {
+		if (negative) {
 			s = "-" + s;
 		}
 

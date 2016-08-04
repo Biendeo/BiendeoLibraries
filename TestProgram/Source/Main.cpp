@@ -6,9 +6,9 @@
 int main(int argc, char* argv[]) {
 	using namespace Biendeo;
 
-	BigInteger a(123);
+	BigInteger a(1231241);
 
-	BigInteger b(-987);
+	BigInteger b(-98712512);
 
 	BigInteger c = a * b;
 
